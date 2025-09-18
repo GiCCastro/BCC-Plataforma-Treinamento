@@ -11,17 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('collaborator', function (Blueprint $table) {
+        Schema::create('departments', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('collaborator');
+        Schema::dropIfExists('departments');
     }
 };
