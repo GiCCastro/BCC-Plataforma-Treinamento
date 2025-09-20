@@ -1,15 +1,22 @@
 <?php
 
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Company extends Authenticatable
 {
-    use HasFactory;
+    
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
         'name',
         'email',
+        'password',
         'cnpj',
         'cnae',
         'logo',
@@ -21,7 +28,7 @@ class Company extends Authenticatable
         'font',
     ];
 
-    protected $hidden = [
+  protected $hidden = [
         'password',
         'remember_token'
     ];
@@ -35,4 +42,11 @@ class Company extends Authenticatable
     {
         return $this->hasMany(Department::class);
     }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
+
+
 }
