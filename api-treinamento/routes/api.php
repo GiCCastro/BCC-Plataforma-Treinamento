@@ -1,30 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route; // ✅ IMPORTAÇÃO OBRIGATÓRIA
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\CompanyAuthController;
+use App\Http\Controllers\Company\CompanyProfileController;
 
-Route::get('/test-api', function () {
-    return response()->json(['message' => 'API.php está sendo lido!']);
-});
 
 Route::prefix('company')  // Prefixo para as rotas relacionadas à empresa
     ->controller(CompanyAuthController::class)  // Usando o controller diretamente
     ->group(function () {
 
-        // Rota para registrar uma empresa
         Route::post('/register', 'register');
-
-        // Rota para login de uma empresa
         Route::post('/login', 'login');
-
-        // Rotas protegidas por middleware de autenticação
         Route::middleware('auth:sanctum')->group(function () {
 
-            // Rota para logout de uma empresa
             Route::post('/logout', 'logout');
 
         });
-        
-
 
     });
+
+Route::prefix('company')
+    ->middleware('auth:sanctum')
+    ->group(function () {
+        Route::patch('/update-profile', [CompanyProfileController::class, 'updateProfile']);
+        Route::patch('/update-assets', [CompanyProfileController::class, 'uploadAssets']);
+    });
+    
