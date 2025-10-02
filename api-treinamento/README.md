@@ -20,6 +20,7 @@ Descrição: Cadastra uma nova empresa e retorna token de autenticação.
 
 Body (JSON):
 
+```json
 {
   "name": "Minha Empresa",
   "email": "empresa@email.com",
@@ -27,17 +28,20 @@ Body (JSON):
   "cnpj": "12345678000190",
   "cnae": "6201-5/01"
 }
+```
 
 1.2 Login da Empresa
 --------------------
 
 Rota: POST/api/company/auth/login
 Body (JSON):
+```json
 
 { 
 "email":"empresa@email.com", 
 "password":"12345678"
 }
+```
 
 1.3 Logout da Empresa
 ---------------------
@@ -53,13 +57,15 @@ Rota: PATCH/api/company/profile
 Middleware: auth:company
 Body (JSON):
 
+```json
 { 
-"primary\_color":"#FF0000", 
-"secondary\_color": "#00FF00", 
-"text\_color": "#000000", 
-"button\_color":"#FFFFFF", 
+"primary_color":"#FF0000", 
+"secondary_color": "#00FF00", 
+"text_color": "#000000", 
+"button_color":"#FFFFFF", 
 "font": "Arial"
 }
+```
 
 1.5 Upload de Assets (Logo/Banner)
 ----------------------------------
@@ -75,11 +81,13 @@ Body:multipart/form-data com logo e/ou banner.
 ----------------------------
 
 Rota: POST/api/company/departmentsMiddleware: auth:companyBody(JSON):
-
+```json
 { 
 "name":"Financeiro", 
 "description": "Departamento financeiro"
 }
+```
+
 
 2.2 Listar Departamentos
 ------------------------
@@ -97,26 +105,28 @@ Body:Nenhum
 Rota: POST/api/company/collaborators
 Middleware: auth:company
 Body(JSON):
-
+```json
 { 
 "name":"João Silva", 
 "email":"joao.silva@email.com", 
 "cpf":"12345678900", 
-"password": "12345678", "
-birth_date": "1990-01-01", 
+"password": "12345678",
+"birth_date": "1990-01-01", 
 "photo":null, 
-"departments": \[9\]}
-
+"departments": [9, 7]
+}
+```
 3.2 Login de Colaborador
 ------------------------
 
 Rota: POST/api/collaborator/auth/login
 Body (JSON):
-
+```json
 { 
 "email":"joao.silva@email.com", 
 "password":"12345678"
 }
+```
 
 3.3 Logout de Colaborador
 -------------------------
