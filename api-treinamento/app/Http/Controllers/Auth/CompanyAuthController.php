@@ -5,54 +5,57 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Validator;
+
 
 class CompanyAuthController extends Controller
 {
     // Cadastro da empresa
-    public function register(Request $request)
-    {
-        $request->validate(
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|unique:companies',
-                'password' => 'required|string|min:8',
-                'cnpj' => 'required|string|unique:companies',
-                'cnae' => 'required|string'
-            ],
-            [
-                'email.unique' => 'Email já cadastrado',
-                'cnpj.unique' => 'CNPJ já cadastrado',
-            ]
-        )
-        ;
 
-        try {
-            $company = Company::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password, // O setPasswordAttribute faz o bcrypt
-                'cnpj' => $request->cnpj,
-                'cnae' => $request->cnae,
-            ]);
+public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|unique:companies',
+        'password' => 'required|string|min:8',
+        'cnpj' => 'required|string|unique:companies',
+        'cnae' => 'required|string'
+    ], [
+        'email.unique' => 'Email já cadastrado',
+        'cnpj.unique' => 'CNPJ já cadastrado',
+    ]);
 
-            $token = $company->createToken('company_token')->plainTextToken;
-
-            return response()->json([
-                'company' => $company,
-                'token' => $token
-            ], 201);
-
-        } catch (QueryException $e) {
-
-            return response()->json([
-                'message' => 'Erro ao cadastrar empresa',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Erro de validação',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    try {
+        $company = Company::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password, // bcrypt no model
+            'cnpj' => $request->cnpj,
+            'cnae' => $request->cnae,
+        ]);
+
+        $token = $company->createToken('company_token')->plainTextToken;
+
+        return response()->json([
+            'company' => $company,
+            'token' => $token
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Erro ao cadastrar empresa',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
     // Login da empresa
     public function login(Request $request)

@@ -3,26 +3,38 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\CompanyAuthController;
 use App\Http\Controllers\Company\CompanyProfileController;
+use App\Http\Controllers\Auth\CollaboratorAuthController;
+use App\Http\Controllers\Department\DepartmentController;
 
 
-Route::prefix('company')  // Prefixo para as rotas relacionadas à empresa
-    ->controller(CompanyAuthController::class)  // Usando o controller diretamente
-    ->group(function () {
+Route::prefix('company')->group(function () {
 
-        Route::post('/register', 'register');
-        Route::post('/login', 'login');
-        Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(CompanyAuthController::class)->group(function () {
+        Route::post('/auth/register', 'register'); 
+        Route::post('/auth/login', 'login');       
+    });
 
-            Route::post('/logout', 'logout');
+    Route::middleware('auth:company')->group(function () {
 
+        Route::post('/auth/logout', [CompanyAuthController::class, 'logout']);
+
+        Route::patch('/profile', [CompanyProfileController::class, 'updateProfile']);
+        Route::patch('/assets', [CompanyProfileController::class, 'uploadAssets']);
+
+        Route::prefix('departments')->group(function () {
+            Route::post('/', [DepartmentController::class, 'register']);
+            Route::get('/', [DepartmentController::class, 'index']);     
         });
 
+        Route::prefix('collaborators')->group(function () {
+            Route::post('/', [CollaboratorAuthController::class, 'register']); 
+        });
     });
+});
 
-Route::prefix('company')
-    ->middleware('auth:sanctum')
-    ->group(function () {
-        Route::patch('/update-profile', [CompanyProfileController::class, 'updateProfile']);
-        Route::patch('/update-assets', [CompanyProfileController::class, 'uploadAssets']);
+
+Route::prefix('collaborator')->group(function () {
+    Route::controller(CollaboratorAuthController::class)->group(function () {
+        Route::post('/auth/login', 'login'); // Login do colaborador
     });
-    
+});
