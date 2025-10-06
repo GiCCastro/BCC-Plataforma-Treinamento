@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Company extends Authenticatable
 {
-    
+
     use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
@@ -28,7 +28,7 @@ class Company extends Authenticatable
         'font',
     ];
 
-  protected $hidden = [
+    protected $hidden = [
         'password',
         'remember_token'
     ];
@@ -41,6 +41,26 @@ class Company extends Authenticatable
     public function departments()
     {
         return $this->hasMany(Department::class);
+    }
+
+    public function tracks()
+    {
+        return $this->hasMany(Track::class);
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
     }
 
     public function setPasswordAttribute($value)

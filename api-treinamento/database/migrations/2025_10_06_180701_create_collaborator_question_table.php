@@ -17,8 +17,6 @@ return new class extends Migration {
             $table->char('selected_option', 1); // A, B, C ou D
             $table->boolean('is_correct')->default(false); // comparado com correct_option
             $table->timestamps();
-            
-
         });
     }
 

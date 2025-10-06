@@ -39,11 +39,46 @@ class Collaborator extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
-    public function departments(){
+    public function departments()
+    {
         return $this->belongsToMany(Department::class, 'collaborator_department');
     }
 
-    public function setPasswordAttribute($value){
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_collaborator')
+            ->withPivot('completed', 'completed_at')
+            ->withTimestamps();
+    }
+
+    public function questions(){
+        return $this->belongsToMany(Question::class, 'collaborator_question')
+        ->withPivot('selected_option', 'is_correct')
+        ->withTimestamps();
+    }
+
+    public function hasAnsweredCorrestly($questionId){
+        return $this->questions()
+                    ->wherePivot('question_id', $questionId)
+                    ->wherePivot('is_correct', true)
+                    ->exists();
+    }
+
+    public function courses(){
+        return $this->belongsToMany(Course::class,'course_collaborator')
+                    ->withPivot('progress','completed', 'completed_at')
+                    ->withTimestamps();
+    }
+
+    public function tracks(){
+        return $this->belongsToMany(Track::class, 'track_collaborator')
+                    ->withPivot('progress', 'completed', 'completed_at')
+                    ->withTimestamps();
+
+    }
+
+    public function setPasswordAttribute($value)
+    {
         $this->attributes['password'] = bcrypt($value);
     }
 

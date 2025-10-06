@@ -19,6 +19,9 @@ return new class extends Migration {
             $table->string('option_c')->nullable();
             $table->string('option_d')->nullable();
             $table->char('correct_option', 1); 
+
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+
             $table->timestamps();
 
         });
