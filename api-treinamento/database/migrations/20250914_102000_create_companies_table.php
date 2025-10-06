@@ -18,12 +18,12 @@ return new class extends Migration
         $table->string('password');
         $table->string('cnpj')->unique();
         $table->string('cnae');
-        $table->string('logo')->nullable();
+        $table->longText('logo')->nullable();
         $table->string('primary_color')->nullable();
         $table->string('secondary_color')->nullable();
         $table->string('text_color')->nullable();
         $table->string('button_color')->nullable();
-        $table->string('banner')->nullable();
+        $table->longText('banner')->nullable();
         $table->string('font')->nullable();
         $table->rememberToken();
 
