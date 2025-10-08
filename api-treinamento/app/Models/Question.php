@@ -17,6 +17,8 @@ class Question extends Model
         'option_c',
         'option_d',
         'correct_option',
+        'company_id'
+
     ];
 
     public function company()

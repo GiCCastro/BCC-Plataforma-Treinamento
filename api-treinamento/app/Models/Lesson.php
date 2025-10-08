@@ -14,6 +14,8 @@ class Lesson extends Model
         'description',
         'link',
         'course_id',
+        'company_id'
+
     ];
 
     public function company()

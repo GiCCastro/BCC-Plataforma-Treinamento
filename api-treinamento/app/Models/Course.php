@@ -13,6 +13,8 @@ class Course extends Model
         'name',
         'description',
         'banner',
+        'company_id'
+
     ];
 
     public function company()

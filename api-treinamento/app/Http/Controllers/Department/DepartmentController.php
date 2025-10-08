@@ -11,14 +11,21 @@ class DepartmentController extends Controller
 {
     public function register(Request $request)
     {
+        try {
 
-        $request->validate([
+        $validator = \Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
         ]);
 
-        try {
-            $company = $request->user();
+         if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Dados inválidos',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+            $company = $request->uaser();
 
             $department = Department::create([
                 'name' => $request->name,
@@ -44,6 +51,10 @@ class DepartmentController extends Controller
             $company = auth('company')->user();
 
             $departments = $company->departments()->get();
+
+            if (!$company) {
+                return response()->json(['message' => 'Empresa não autenticada'], 401);
+            }
 
             return response()->json([
                 'departments' => $departments
