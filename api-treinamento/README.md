@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-Documentaçãoda API - Gestão de Empresas, Departamentos e Colaboradores
+Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 
 1\. Empresa (Company)
 =====================
@@ -15,10 +15,9 @@ Documentaçãoda API - Gestão de Empresas, Departamentos e Colaboradores
 1.1 Cadastro de Empresa
 -----------------------
 
-Rota: POST/api/company/auth/register
-Descrição: Cadastra uma nova empresa e retorna token de autenticação.
-
-Body (JSON):
+- Rota: POST/api/company/auth/register
+- Descrição: Cadastra uma nova empresa e retorna token de autenticação.
+- Body (JSON):
 
 ```json
 {
@@ -33,8 +32,8 @@ Body (JSON):
 1.2 Login da Empresa
 --------------------
 
-Rota: POST/api/company/auth/login
-Body (JSON):
+- Rota: POST/api/company/auth/login
+- Body (JSON):
 ```json
 
 { 
@@ -46,16 +45,16 @@ Body (JSON):
 1.3 Logout da Empresa
 ---------------------
 
-Rota: POST/api/company/auth/logout
-Middleware: auth:company
-Body:Nenhum
+- Rota: POST/api/company/auth/logout
+- Middleware: auth:company
+- Body:Nenhum
 
 1.4 Atualizar Perfil da Empresa
 -------------------------------
 
-Rota: PATCH/api/company/profile
-Middleware: auth:company
-Body (JSON):
+- Rota: PATCH/api/company/profile
+- Middleware: auth:company
+- Body (JSON):
 
 ```json
 { 
@@ -70,9 +69,9 @@ Body (JSON):
 1.5 Upload de Assets (Logo/Banner)
 ----------------------------------
 
-Rota: PATCH/api/company/assets
-Middleware: auth:company
-Body:multipart/form-data com logo e/ou banner.
+- Rota: PATCH/api/company/assets
+- Middleware: auth:company
+- Body:multipart/form-data com logo e/ou banner.
 
 2\. Departamento (Department)
 =============================
@@ -80,7 +79,9 @@ Body:multipart/form-data com logo e/ou banner.
 2.1 Cadastro de Departamento
 ----------------------------
 
-Rota: POST/api/company/departmentsMiddleware: auth:companyBody(JSON):
+- Rota: POST/api/company/department
+- Middleware: auth:company
+- Body(JSON):
 ```json
 { 
 "name":"Financeiro", 
@@ -92,9 +93,9 @@ Rota: POST/api/company/departmentsMiddleware: auth:companyBody(JSON):
 2.2 Listar Departamentos
 ------------------------
 
-Rota: GET/api/company/departments
-Middleware: auth:company
-Body:Nenhum
+- Rota: GET/api/company/department
+- Middleware: auth:company
+- Body:Nenhum
 
 3\. Colaborador (Collaborator)
 ==============================
@@ -102,9 +103,9 @@ Body:Nenhum
 3.1 Cadastro de Colaborador
 ---------------------------
 
-Rota: POST/api/company/collaborators
-Middleware: auth:company
-Body(JSON):
+- Rota: POST/api/company/collaborator
+- Middleware: auth:company
+- Body(JSON):
 ```json
 { 
 "name":"João Silva", 
@@ -119,8 +120,8 @@ Body(JSON):
 3.2 Login de Colaborador
 ------------------------
 
-Rota: POST/api/collaborator/auth/login
-Body (JSON):
+- Rota: POST/api/collaborator/auth/login
+- Body (JSON):
 ```json
 { 
 "email":"joao.silva@email.com", 
@@ -131,14 +132,14 @@ Body (JSON):
 3.3 Logout de Colaborador
 -------------------------
 
-Rota: POST/api/collaborator/auth/logout
-Middleware:auth:collaborator
-Body: Nenhum
+- Rota: POST/api/collaborator/auth/logout
+- Middleware:auth:collaborator
+- Body: Nenhum
 
 Observações Gerais
 ==================
 
 \- Todos os endpoints autenticados exigem Bearer Token no header Authorization.
-- Validaçõesretornam 422 com objeto detalhado de erros.
+- Validações retornam 422 com objeto detalhado de erros.
 - - Erros de autenticação retornam 401.
 - - Erros inesperados do servidor retornam 500.
