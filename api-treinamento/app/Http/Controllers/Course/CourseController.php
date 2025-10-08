@@ -15,7 +15,9 @@ class CourseController extends Controller
 {
     public function register(Request $request)
     {
-        $validated = $request->validate([
+                try {
+
+        $validator = \Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'banner' => 'nullable',
@@ -32,7 +34,6 @@ class CourseController extends Controller
 
         DB::beginTransaction();
 
-        try {
 
 
             $company = auth('company')->user();
@@ -49,13 +50,13 @@ class CourseController extends Controller
 
 
             $course = Course::create([
-                'name' => $validated['name'],
-                'description' => $validated['description'] ?? null,
+                'name' => $request -> name,
+                'description' => $request['description'] ?? null,
                 'banner' => $base64,
                 'company_id' => $company->id,
             ]);
 
-            foreach ($validated['lessons'] as $lessonData) {
+            foreach ($request -> lessons as $lessonData) {
                 $lesson = Lesson::create([
                     'name' => $lessonData['name'],
                     'description' => $lessonData['description'] ?? null,
