@@ -21,7 +21,7 @@ class CourseController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'banner' => 'nullable',
-            'lessons' => 'required|array',
+            'lessons' => 'required',
             'lessons.*.name' => 'required|string|max:255',
             'lessons.*.description' => 'nullable|string',
             'lessons.*.link' => 'required|string',
@@ -45,7 +45,7 @@ class CourseController extends Controller
                 $mime = $file->getClientMimeType();
                 $base64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
             } else {
-                $base64 = $validated['banner'] ?? null;
+                $base64 = $request->banner ?? null;
             }
 
 
@@ -56,7 +56,15 @@ class CourseController extends Controller
                 'company_id' => $company->id,
             ]);
 
-            foreach ($request -> lessons as $lessonData) {
+            $lessons = json_decode($request->lessons, true);
+
+            if(!is_array($lessons)) {
+                return response()->json([
+                    'message' => 'Campo lessons inválido'
+                ], 422);
+            }
+
+            foreach ($lessons as $lessonData) {
                 $lesson = Lesson::create([
                     'name' => $lessonData['name'],
                     'description' => $lessonData['description'] ?? null,
@@ -88,7 +96,7 @@ class CourseController extends Controller
                 'message' => 'Curso criado com sucesso',
                 'data' => $course->load('lessons.questions')
             ], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
                 'message' => 'Erro ao criar curso',
