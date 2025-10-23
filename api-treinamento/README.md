@@ -117,7 +117,15 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 "departments": [9, 7]
 }
 ```
-3.2 Login de Colaborador
+
+3.2 Listar Colaborador
+-------------------------
+
+- Rota: GET/api/company/collaborator
+- Middleware:auth:company
+- Body: Nenhum
+
+3.3 Login de Colaborador
 ------------------------
 
 - Rota: POST/api/collaborator/auth/login
@@ -129,12 +137,13 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 }
 ```
 
-3.3 Logout de Colaborador
+3.4 Logout de Colaborador
 -------------------------
 
 - Rota: POST/api/collaborator/auth/logout
 - Middleware:auth:collaborator
 - Body: Nenhum
+
 
 Observações Gerais
 ==================
