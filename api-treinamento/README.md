@@ -71,7 +71,7 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 
 - Rota: PATCH/api/company/assets
 - Middleware: auth:company
-- Body:multipart/form-data com logo e/ou banner.
+- Body: upload com logo e/ou banner.
 
 2\. Departamento (Department)
 =============================
@@ -113,7 +113,7 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 "cpf":"12345678900", 
 "password": "12345678",
 "birth_date": "1990-01-01", 
-"photo":null, 
+"photo": (upload), 
 "departments": [9, 7]
 }
 ```
@@ -144,6 +144,61 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 - Middleware:auth:collaborator
 - Body: Nenhum
 
+  
+4\. Curso
+==============================
+
+4.1 Cadastro de Curso/Aulas/Questões
+---------------------------
+- Rota: POST/api/company/course
+- Middleware: auth:company
+- Body(JSON):
+
+```json
+
+{
+"name": "Curso de Integração de Novos Colaboradores",
+"description": "Trilha introdutória para novos funcionários conhecerem a empresa.",
+"banner": "(upload)",
+"lessons": [
+  {
+    "name": "Boas-vindas e Cultura Organizacional",
+    "description": "Apresentação dos valores e missão da empresa.",
+    "link": "https://www.youtube.com/watch?v=abcd1234",
+     "questions": [
+       {
+        "question_text": "Qual é o principal valor da empresa?",
+        "option_a": "Inovação",
+        "option_b": "Comprometimento",
+        "correct_option": "B"
+       }
+     ]
+    }
+   ]
+  }
+```
+4.2 Responder questão
+---------------------------
+- Rota: POST/api/collaborator/learning/answer
+- Middleware: auth:collaborator
+- Body(JSON):
+
+```json
+{
+  "question_id": 2,
+  "selected_option": "B"
+}
+```
+
+4.3 Listar Trilha/Curso/Aula/Questões e progresso
+-------------------------
+
+- Rota: GET/api/collaborator/learning/progress
+- Middleware:auth:collaborator
+- Body: Nenhum
+
+4\. Trilha
+==============================
 
 Observações Gerais
 ==================
