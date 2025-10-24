@@ -14,7 +14,6 @@ class TrackController extends Controller
         DB::beginTransaction();
 
         try {
-            // 🔹 Validação inicial — apenas garante que vieram os campos
             $validator = \Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
@@ -35,13 +34,11 @@ class TrackController extends Controller
 
             $validated = $validator->validated();
 
-            // 🔹 Autenticação da empresa
             $company = auth('company')->user();
             if (!$company) {
                 return response()->json(['message' => 'Empresa não autenticada'], 401);
             }
 
-            // 🔹 Banner (upload opcional)
             if ($request->hasFile('banner')) {
                 $file = $request->file('banner');
                 $mime = $file->getClientMimeType();
@@ -50,7 +47,6 @@ class TrackController extends Controller
                 $base64 = $validated['banner'] ?? null;
             }
 
-            // 🔹 Converte strings JSON em arrays
             $courses = json_decode($request->courses, true);
             $departments = json_decode($request->departments, true);
 
@@ -62,7 +58,6 @@ class TrackController extends Controller
                 return response()->json(['message' => 'Campo "departments" inválido'], 422);
             }
 
-            // 🔹 Verifica se os cursos e departamentos pertencem à empresa
             $validCourses = $company->courses()->pluck('id')->toArray();
             $invalidCourses = array_diff($courses, $validCourses);
 
@@ -83,7 +78,6 @@ class TrackController extends Controller
                 ], 422);
             }
 
-            // 🔹 Criação da trilha
             $track = Track::create([
                 'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
@@ -91,7 +85,6 @@ class TrackController extends Controller
                 'company_id' => $company->id,
             ]);
 
-            // 🔹 Vinculação (usando arrays decodificados)
             $track->courses()->sync($courses);
             $track->departments()->sync($departments);
 

@@ -25,7 +25,7 @@ class DepartmentController extends Controller
             ], 422);
         }
 
-            $company = $request->uaser();
+            $company = $request->user();
 
             $department = Department::create([
                 'name' => $request->name,

@@ -15,26 +15,32 @@ class CourseController extends Controller
 {
     public function register(Request $request)
     {
-                try {
+        try {
 
-        $validator = \Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'banner' => 'nullable',
-            'lessons' => 'required',
-            'lessons.*.name' => 'required|string|max:255',
-            'lessons.*.description' => 'nullable|string',
-            'lessons.*.link' => 'required|string',
-            'lessons.*.questions' => 'nullable|array',
-            'lessons.*.questions.*.question_text' => 'required|string',
-            'lessons.*.questions.*.option_a' => 'required|string',
-            'lessons.*.questions.*.option_b' => 'required|string',
-            'lessons.*.questions.*.correct_option' => 'required|string|in:A,B,C,D',
-        ]);
+            $validator = \Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'banner' => 'nullable',
+                'lessons' => 'required',
+                'lessons.*.name' => 'required|string|max:255',
+                'lessons.*.description' => 'nullable|string',
+                'lessons.*.link' => 'required|string',
+                'lessons.*.questions' => 'required|array',
+                'lessons.*.questions.*.question_text' => 'required|string',
+                'lessons.*.questions.*.option_a' => 'required|string',
+                'lessons.*.questions.*.option_b' => 'required|string',
+                'lessons.*.questions.*.correct_option' => 'required|string|in:A,B,C,D',
+            ]);
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
 
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Dados inválidos',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
             $company = auth('company')->user();
             if (!$company) {
@@ -50,7 +56,7 @@ class CourseController extends Controller
 
 
             $course = Course::create([
-                'name' => $request -> name,
+                'name' => $request->name,
                 'description' => $request['description'] ?? null,
                 'banner' => $base64,
                 'company_id' => $company->id,
@@ -58,7 +64,7 @@ class CourseController extends Controller
 
             $lessons = json_decode($request->lessons, true);
 
-            if(!is_array($lessons)) {
+            if (!is_array($lessons)) {
                 return response()->json([
                     'message' => 'Campo lessons inválido'
                 ], 422);
