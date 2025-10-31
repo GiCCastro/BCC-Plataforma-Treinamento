@@ -110,26 +110,4 @@ class CourseController extends Controller
             ], 500);
         }
     }
-
-    public function index()
-    {
-        try {
-            $company = auth('company')->user();
-
-            if (!$company) {
-                return response()->json(['message' => 'Empresa não autenticada'], 401);
-            }
-
-            $courses = $company->courses()->get();
-
-            return response()->json([
-                'courses' => $courses
-            ], 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Erro ao listar cursos',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
 }

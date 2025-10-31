@@ -37,11 +37,11 @@ Route::prefix('company')->group(function () {
 
         Route::prefix('course')->group(function () {
             Route::post('/', [CourseController::class, 'register']);
-            Route::get('/', [CourseController::class, 'index']);
         });
 
         Route::prefix('track')->group(function () {
             Route::post('/', [TrackController::class, 'register']);
+            Route::get('/', [TrackController::class, 'index']);
         });
     });
 });

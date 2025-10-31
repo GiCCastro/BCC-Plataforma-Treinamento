@@ -104,4 +104,22 @@ class TrackController extends Controller
             ], 500);
         }
     }
+
+    public function index()
+    {
+        $company = auth('company')->user();
+
+        $tracks = Track::where('company_id', $company->id)
+            ->with([
+                'courses.lessons.questions'
+            ])
+            ->get();
+
+        if ($tracks->isEmpty()) {
+            return response()->json(['message' => 'Nenhuma trilha encontrada'], 404);
+        }
+
+        return response()->json($tracks);
+
+    }
 }

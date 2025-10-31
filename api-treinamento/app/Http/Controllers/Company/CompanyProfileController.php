@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class CompanyProfileController extends Controller
 {
@@ -33,41 +35,74 @@ class CompanyProfileController extends Controller
         ], 200);
     }
 
-    
+
     public function uploadAssets(Request $request)
     {
-        $company = $request->user();
+        try {
+            $company = auth('company')->user();
 
-        $request->validate([
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-        ]);
-
-        $data = [];
-
-        if ($request->hasFile('logo')) {
-            $logoMime = $request->file('logo')->getMimeType();
-            if (!in_array($logoMime, ['image/jpeg', 'image/png'])) {
-                return response()->json(['error' => 'Apenas imagens JPG ou PNG são permitidas para logo'], 422);
+            if (!$company) {
+                return response()->json(['message' => 'Empresa não autenticada'], 401);
             }
-            $data['logo'] = $request->file('logo')->store('logos', 'public');
-        }
 
-        if ($request->hasFile('banner')) {
-            $bannerMime = $request->file('banner')->getMimeType();
-            if (!in_array($bannerMime, ['image/jpeg', 'image/png'])) {
-                return response()->json(['error' => 'Apenas imagens JPG ou PNG são permitidas para banner'], 422);
+            $validator = \Validator::make($request->all(), [
+                'logo' => 'nullable',
+                'banner' => 'nullable',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Dados inválidos',
+                    'errors' => $validator->errors()
+                ], 422);
             }
-            $data['banner'] = $request->file('banner')->store('banners', 'public');
+
+            DB::beginTransaction();
+
+            // Atualiza o logo, se enviado
+            if ($request->hasFile('logo')) {
+                $file = $request->file('logo');
+                $mime = $file->getClientMimeType();
+                $base64Logo = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+                $company->logo = $base64Logo;
+            } elseif ($request->filled('logo')) {
+                // Caso já venha em Base64 no corpo
+                $company->logo = $request->logo;
+            }
+
+            // Atualiza o banner, se enviado
+            if ($request->hasFile('banner')) {
+                $file = $request->file('banner');
+                $mime = $file->getClientMimeType();
+                $base64Banner = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+                $company->banner = $base64Banner;
+            } elseif ($request->filled('banner')) {
+                // Caso já venha em Base64 no corpo
+                $company->banner = $request->banner;
+            }
+
+            $company->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Logo e/ou banner atualizados com sucesso',
+                'data' => [
+                    'logo' => $company->logo,
+                    'banner' => $company->banner,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Erro ao atualizar logo/banner',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $company->update($data);
-
-        return response()->json([
-            'message' => 'Imagens atualizadas com sucesso',
-            'company' => $company
-        ], 200);
     }
+
+
 
 
 }
