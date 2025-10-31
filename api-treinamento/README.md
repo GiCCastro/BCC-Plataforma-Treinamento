@@ -190,15 +190,18 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 }
 ```
 
-4.3 Listar Trilha/Curso/Aula/Questões e progresso
+4.3 Listar Trilha/Curso/Aula/Questões e progresso (colaborador)
 -------------------------
 
 - Rota: GET/api/collaborator/learning/progress
 - Middleware:auth:collaborator
 - Body: Nenhum
 
-4\. Trilha
-==============================
+4.4 Listar Trilha/Curso/Aula/Questões e progresso (colaborador)
+-------------------------
+- Rota: GET/api/company/track
+- Middleware:auth:company
+- Body: Nenhum
 
 Observações Gerais
 ==================
