@@ -69,7 +69,7 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 1.5 Upload de Assets (Logo/Banner)
 ----------------------------------
 
-- Rota: PATCH/api/company/assets
+- Rota: POST/api/company/assets
 - Middleware: auth:company
 - Body: upload com logo e/ou banner.
 
