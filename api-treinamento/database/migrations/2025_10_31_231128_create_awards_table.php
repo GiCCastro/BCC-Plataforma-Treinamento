@@ -10,11 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('courses', function (Blueprint $table) {
+        Schema::create('awards', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->longText(column: 'banner')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->integer('min_progress')->default(0);
+            $table->integer('min_accuracy')->default(0);
+            $table->boolean('active')->default(true);
 
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
 
@@ -27,6 +32,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('courses');
+        Schema::dropIfExists('awards');
     }
 };

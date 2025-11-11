@@ -63,6 +63,11 @@ class Company extends Authenticatable
         return $this->hasMany(Question::class);
     }
 
+    public function awards()
+    {
+        return $this->hasMany(Award::class);
+    }
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);

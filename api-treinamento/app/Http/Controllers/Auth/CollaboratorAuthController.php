@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\QueryException;
 
 class CollaboratorAuthController extends Controller
 {

@@ -77,6 +77,14 @@ class Collaborator extends Authenticatable
 
     }
 
+    public function awards()
+{
+    return $this->belongsToMany(Award::class, 'collaborator_award')
+                ->withPivot('achieved_at')
+                ->withTimestamps();
+}
+
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);

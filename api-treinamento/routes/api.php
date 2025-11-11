@@ -8,7 +8,8 @@ use App\Http\Controllers\Department\DepartmentController;
 use App\Http\Controllers\Course\CourseController;
 use App\Http\Controllers\Collaborator\CollaboratorController;
 use App\Http\Controllers\Track\TrackController;
-
+use App\Http\Controllers\Award\AwardController;
+use App\Http\Controllers\Award\AwardCollaboratorController;
 
 Route::prefix('company')->group(function () {
 
@@ -22,7 +23,7 @@ Route::prefix('company')->group(function () {
         Route::post('/auth/logout', [CompanyAuthController::class, 'logout']);
 
         Route::patch('/profile', [CompanyProfileController::class, 'updateProfile']);
-        Route::patch('/assets', [CompanyProfileController::class, 'uploadAssets']);
+        Route::post('/assets', [CompanyProfileController::class, 'uploadAssets']);
 
         Route::prefix('department')->group(function () {
             Route::post('/', [DepartmentController::class, 'register']);
@@ -43,6 +44,11 @@ Route::prefix('company')->group(function () {
             Route::post('/', [TrackController::class, 'register']);
             Route::get('/', [TrackController::class, 'index']);
         });
+
+        Route::prefix('award')->group(function () {
+            Route::post('/', [AwardController::class, 'register']);
+            Route::get('/', [AwardController::class, 'index']);
+        });
     });
 });
 
@@ -58,6 +64,10 @@ Route::prefix('collaborator')->group(function () {
         Route::prefix('learning')->group(function () {
             Route::post('/answer', [CollaboratorController::class, 'answerQuestion']);
             Route::get('/progress', [CollaboratorController::class, 'getLearning']);
+        });
+
+         Route::prefix('award')->group(function () {
+            Route::get('/', [AwardCollaboratorController::class, 'index']);
         });
     });
 });

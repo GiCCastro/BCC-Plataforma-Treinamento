@@ -16,7 +16,7 @@ class TrackController extends Controller
         try {
             $validator = \Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
+                'description' => 'nullable|string|max:255',
                 'banner' => 'nullable',
                 'courses' => 'required|string',
                 'departments' => 'required|string',

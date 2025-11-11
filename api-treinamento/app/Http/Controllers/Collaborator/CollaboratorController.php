@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Question;
 use App\Models\Course;
 use App\Models\Track;
+use App\Http\Controllers\Award\AwardAssignController;
 
 class CollaboratorController extends Controller
 {
@@ -82,7 +83,7 @@ class CollaboratorController extends Controller
 
                 $this->updateCourseProgress($lesson->course_id, $collaborator->id);
 
-                $tracks = $lesson->course->tracks; 
+                $tracks = $lesson->course->tracks;
                 foreach ($tracks as $track) {
                     $this->updateTrackProgress($track->id, $collaborator->id);
                 }
@@ -144,48 +145,55 @@ class CollaboratorController extends Controller
                 'progress' => $progress,
                 'completed' => $progress == 100,
                 'completed_at' => $progress == 100 ? now() : null,
+
             ]
         );
+
+        if ($progress == 100) {
+            app(AwardAssignController::class)
+                ->checkAndAssignToCollaborator($collaboratorId);
+        }
+
     }
 
     public function getLearning()
-{
-    $collaborator = auth('collaborator')->user();
+    {
+        $collaborator = auth('collaborator')->user();
 
-    $tracks = $collaborator->tracks()
-        ->with([
-            'courses.lessons' => function ($query) use ($collaborator) {
-                $query->with([
-                    'questions',
-                    'collaborators' => function ($q) use ($collaborator) {
-                        $q->where('collaborator_id', $collaborator->id)
-                          ->select('collaborator_id', 'lesson_id', 'completed', 'completed_at');
-                    }
-                ]);
-            }
-        ])
-        ->get()
-        ->map(function ($track) use ($collaborator) {
+        $tracks = $collaborator->tracks()
+            ->with([
+                'courses.lessons' => function ($query) use ($collaborator) {
+                    $query->with([
+                        'questions',
+                        'collaborators' => function ($q) use ($collaborator) {
+                            $q->where('collaborator_id', $collaborator->id)
+                                ->select('collaborator_id', 'lesson_id', 'completed', 'completed_at');
+                        }
+                    ]);
+                }
+            ])
+            ->get()
+            ->map(function ($track) use ($collaborator) {
 
-            $track->progress = $track->progressFor($collaborator->id);
-            $track->completed = $track->isCompletedBy($collaborator->id);
+                $track->progress = $track->progressFor($collaborator->id);
+                $track->completed = $track->isCompletedBy($collaborator->id);
 
-            $track->courses->each(function ($course) use ($collaborator) {
+                $track->courses->each(function ($course) use ($collaborator) {
 
-                $course->progress = $course->progressFor($collaborator->id);
-                $course->completed = $course->isCompletedBy($collaborator->id);
+                    $course->progress = $course->progressFor($collaborator->id);
+                    $course->completed = $course->isCompletedBy($collaborator->id);
 
-                $course->lessons->each(function ($lesson) use ($collaborator) {
-                    $lesson->is_completed = $lesson->isCompletedBy($collaborator->id);
+                    $course->lessons->each(function ($lesson) use ($collaborator) {
+                        $lesson->is_completed = $lesson->isCompletedBy($collaborator->id);
+                    });
                 });
+
+                return $track;
             });
 
-            return $track;
-        });
-
-    return response()->json([
-        'tracks' => $tracks
-    ]);
-}
+        return response()->json([
+            'tracks' => $tracks
+        ]);
+    }
 
 }
