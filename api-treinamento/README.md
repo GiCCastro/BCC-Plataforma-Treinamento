@@ -68,10 +68,15 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 
 1.5 Upload de Assets (Logo/Banner)
 ----------------------------------
-
 - Rota: POST/api/company/assets
 - Middleware: auth:company
 - Body: upload com logo e/ou banner.
+
+1.6 Deletar perfil
+----------------------------------
+- Rota: DELETE/api/company/id
+- Middleware: auth:company
+- Body: Nenhum
 
 2\. Departamento (Department)
 =============================
@@ -143,7 +148,12 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 - Rota: POST/api/collaborator/auth/logout
 - Middleware:auth:collaborator
 - Body: Nenhum
-
+ 
+4.5 Desativar Colaborador
+-------------------------
+- Rota: GET/api/company/collaborator/id
+- Middleware:auth:company
+- Body: Nenhum
   
 4\. Curso
 ==============================
@@ -177,7 +187,15 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
    ]
   }
 ```
-4.2 Responder questão
+
+4.2 Listar Cursos
+-------------------------
+
+- Rota: GET/api/company/course
+- Middleware:auth:company
+- Body: Nenhum
+
+4.3 Responder questão
 ---------------------------
 - Rota: POST/api/collaborator/learning/answer
 - Middleware: auth:collaborator
@@ -190,16 +208,22 @@ Documentação da API - Gestão de Empresas, Departamentos e Colaboradores
 }
 ```
 
-4.3 Listar Trilha/Curso/Aula/Questões e progresso (colaborador)
+4.4 Listar Trilha/Curso/Aula/Questões e progresso (colaborador)
 -------------------------
 
 - Rota: GET/api/collaborator/learning/progress
 - Middleware:auth:collaborator
 - Body: Nenhum
 
-4.4 Listar Trilha/Curso/Aula/Questões e progresso (colaborador)
+4.5 Listar Trilha/Curso/Aula/Questões e progresso (empresa)
 -------------------------
 - Rota: GET/api/company/track
+- Middleware:auth:company
+- Body: Nenhum
+
+4.5 Deletar curso
+-------------------------
+- Rota: GET/api/company/course/id
 - Middleware:auth:company
 - Body: Nenhum
 
