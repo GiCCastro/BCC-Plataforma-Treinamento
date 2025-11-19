@@ -48,7 +48,7 @@ class DepartmentController extends Controller
     public function index()
     {
         try {
-            $company = auth('company')->user();
+            $company = auth(guard: 'company')->user();
 
             $departments = $company->departments()->get();
 

@@ -122,4 +122,45 @@ class TrackController extends Controller
         return response()->json($tracks);
 
     }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $company = auth('company')->user();
+
+            if (!$company) {
+                return response()->json(['message' => 'Empresa não autenticada'], 401);
+            }
+
+            $track = Track::where('id', $id)
+                ->where('company_id', $company->id)
+                ->first();
+
+            if (!$track) {
+                return response()->json(['message' => 'Trilha não encontrada'], 404);
+            }
+
+            $track->courses()->detach();
+            $track->departments()->detach();
+
+            $track->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Trilha deletada com sucesso!'
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Erro ao deletar trilha',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

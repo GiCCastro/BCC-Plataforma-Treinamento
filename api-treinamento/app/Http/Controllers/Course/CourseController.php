@@ -110,4 +110,78 @@ class CourseController extends Controller
             ], 500);
         }
     }
+
+    public function index(Request $request)
+{
+    try {
+        $company = auth('company')->user();
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'Empresa não autenticada'
+            ], 401);
+        }
+
+        $courses = Course::with(['lessons.questions'])
+            ->where('company_id', $company->id)
+            ->get();
+
+        return response()->json([
+            'message' => 'Cursos listados com sucesso',
+            'data' => $courses
+        ], 200);
+
+    } catch (Exception $e) {
+        return response()->json([
+            'message' => 'Erro ao listar cursos',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    public function destroy($id){
+        try{
+            DB::beginTransaction();
+
+            $company = auth('company')->user();
+            if(!$company){
+                return response()->json([
+                    'message' => 'Empresa não autenticada'
+                ], 401);
+            }
+
+            $course = Course::where('id', $id)
+                ->where('company_id', $company->id)
+                ->first();
+
+            if(!$course){
+                return response()->json([
+                    'message' => 'Curso não encontrado'
+                ], 404);
+            }
+
+            foreach($course->lessons as $lesson){
+                $lesson->questions()->delete();
+            }
+
+            $course->lessons()->delete();
+
+            $course->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Curso deletado com sucesso'
+            ], 200);
+
+        } catch (Exception $e){
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Erro ao deletar curso',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

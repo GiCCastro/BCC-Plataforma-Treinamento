@@ -102,8 +102,34 @@ class CompanyProfileController extends Controller
         }
     }
 
+    public function destroy($id)
+    {
+        DB::beginTransaction();
 
+        try{
+            $company = auth('company')->user();
+        
+            if(!$company){
+                return response()->json(['message' => 'Empresa não autenticada'], 401);
+            }
 
+            $company->delete();
 
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Empresa deletada com sucesso!'
+            ], 200);
+
+        } catch(\Exception $e){
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Erro ao deletar empresa',
+                'error' => $e->getMessage(),
+            ], 500);
+
+        }
+    }
 }
 

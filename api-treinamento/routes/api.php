@@ -24,6 +24,7 @@ Route::prefix('company')->group(function () {
 
         Route::patch('/profile', [CompanyProfileController::class, 'updateProfile']);
         Route::post('/assets', [CompanyProfileController::class, 'uploadAssets']);
+        Route::delete('/{CompanyId}', [CompanyProfileController::class, 'destroy']);
 
         Route::prefix('department')->group(function () {
             Route::post('/', [DepartmentController::class, 'register']);
@@ -33,21 +34,28 @@ Route::prefix('company')->group(function () {
         Route::prefix('collaborator')->group(function () {
             Route::post('/', [CollaboratorAuthController::class, 'register']);
             Route::get('/', [CollaboratorController::class, 'index']);
-
+            Route::patch('/{CollaboratorId}', [CollaboratorController::class, 'deactivate']);
         });
 
         Route::prefix('course')->group(function () {
             Route::post('/', [CourseController::class, 'register']);
+            Route::get('/', [CourseController::class, 'index']);
+            Route::delete('/{courseId}', [CourseController::class, 'destroy']);
         });
 
         Route::prefix('track')->group(function () {
             Route::post('/', [TrackController::class, 'register']);
             Route::get('/', [TrackController::class, 'index']);
+            Route::delete('/{trackId}', [TrackController::class, 'destroy']);
+
+
         });
 
         Route::prefix('award')->group(function () {
             Route::post('/', [AwardController::class, 'register']);
             Route::get('/', [AwardController::class, 'index']);
+            Route::delete('/{awardId}', [AwardController::class, 'destroy']);
+
         });
     });
 });
@@ -66,7 +74,7 @@ Route::prefix('collaborator')->group(function () {
             Route::get('/progress', [CollaboratorController::class, 'getLearning']);
         });
 
-         Route::prefix('award')->group(function () {
+        Route::prefix('award')->group(function () {
             Route::get('/', [AwardCollaboratorController::class, 'index']);
         });
     });

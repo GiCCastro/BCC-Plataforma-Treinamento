@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Question;
 use App\Models\Course;
 use App\Models\Track;
+use App\Models\Collaborator;
 use App\Http\Controllers\Award\AwardAssignController;
 
 class CollaboratorController extends Controller
@@ -36,6 +37,48 @@ class CollaboratorController extends Controller
             ], 500);
         }
     }
+
+    public function deactivate($id)
+{
+    try {
+        // Autentica a empresa
+        $company = auth('company')->user();
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'Empresa não autenticada'
+            ], 401);
+        }
+
+        // Busca colaborador pertencente à empresa
+        $collaborator = Collaborator::where('id', $id)
+            ->where('company_id', $company->id)
+            ->first();
+
+        if (!$collaborator) {
+            return response()->json([
+                'message' => 'Colaborador não encontrado ou não pertence à empresa'
+            ], 404);
+        }
+
+        // Atualiza para inativo
+        $collaborator->update([
+            'is_active' => false
+        ]);
+
+        return response()->json([
+            'message' => 'Colaborador desativado com sucesso',
+            'collaborator' => $collaborator
+        ], 200);
+
+    } catch (Exception $e) {
+        return response()->json([
+            'message' => 'Erro ao desativar colaborador',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
     public function answerQuestion(Request $request)
     {

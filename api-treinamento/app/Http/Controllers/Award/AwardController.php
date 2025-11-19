@@ -97,6 +97,46 @@ class AwardController extends Controller
             ], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $company = auth('company')->user();
+
+            if (!$company) {
+                return response()->json(['message' => 'Empresa não autenticada'], 401);
+            }
+
+            $award = Award::where('id', $id)
+                ->where('company_id', $company->id)
+                ->first();
+
+            if (!$award) {
+                return response()->json(['message' => 'Premiação não encontrada'], 404);
+            }
+
+            $award->collaborators()->detach();
+            
+
+            $award->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Premiação deletada com sucesso!'
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Erro ao deletar premiação',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
 
 
